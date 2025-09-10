@@ -1,21 +1,27 @@
 module.exports = async (req, res) => {
-    // Разрешаем CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Content-Type', 'application/json');
+  // ★ CORS заголовки ★
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Обработка OPTIONS запроса (preflight)
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  try {
+    const query = req.query.q || '';
     
-    try {
-      const query = req.query.q || '';
-      
-      // Простые тестовые данные
-      const products = [
-        { id: 1, title: `Телефон ${query}`, price: "1000 TON", image: "https://via.placeholder.com/150" },
-        { id: 2, title: `Ноутбук ${query}`, price: "2500 TON", image: "https://via.placeholder.com/150" },
-        { id: 3, title: `Наушники ${query}`, price: "500 TON", image: "https://via.placeholder.com/150" }
-      ];
-      
-      res.json(products);
-    } catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Server error' });
-    }
-  };
+    // Тестовые данные
+    const products = [
+      { id: 1, title: `Результат для "${query}"`, price: "1000 TON" },
+      { id: 2, title: "Телефон", price: "1500 TON" },
+      { id: 3, title: "Ноутбук", price: "2500 TON" }
+    ];
+    
+    res.json(products);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
