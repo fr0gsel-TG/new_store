@@ -3,497 +3,307 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Магазин в Telegram - Решение CORS</title>
+    <title>Мой Telegram Магазин</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
+        :root {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #222222;
+            --tg-theme-button-color: #40a7e3;
+            --tg-theme-button-text-color: #ffffff;
+            --tg-theme-secondary-bg-color: #f1f1f1;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--tg-theme-bg-color, #f5f5f5) 0%, #e0e0e0 100%);
-            color: var(--tg-theme-text-color, #222222);
-            padding: 16px;
-            line-height: 1.6;
-            min-height: 100vh;
+            background-color: var(--tg-theme-bg-color);
+            color: var(--tg-theme-text-color);
+            padding: 10px;
         }
-        
+
         .container {
-            max-width: 800px;
+            max-width: 100%;
             margin: 0 auto;
         }
-        
+
         header {
             text-align: center;
-            margin-bottom: 24px;
-            padding: 20px;
-            background: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            margin-bottom: 15px;
+            background: var(--tg-theme-secondary-bg-color);
+            border-radius: 10px;
         }
-        
+
         h1 {
-            font-size: 24px;
-            margin-bottom: 8px;
-            color: var(--tg-theme-text-color, #222222);
-        }
-        
-        .subtitle {
-            color: var(--tg-theme-hint-color, #999999);
-            font-size: 16px;
-            margin-bottom: 12px;
-        }
-        
-        .logo {
-            font-size: 32px;
-            margin-bottom: 16px;
-        }
-        
-        .card {
-            background-color: var(--tg-theme-secondary-bg-color, #ffffff);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        h2 {
             font-size: 20px;
-            margin-bottom: 16px;
-            color: var(--tg-theme-text-color, #222222);
-            display: flex;
-            align-items: center;
+            margin-bottom: 5px;
         }
-        
-        h2 i {
-            margin-right: 10px;
-            font-size: 24px;
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 60px;
         }
-        
-        .problem {
-            border-left: 6px solid #ff5c5c;
-        }
-        
-        .solution {
-            border-left: 6px solid #5cff5c;
-        }
-        
-        .code {
-            background-color: var(--tg-theme-bg-color, #f8f8f8);
+
+        .product {
+            background: var(--tg-theme-secondary-bg-color);
             border-radius: 12px;
-            padding: 18px;
-            margin: 16px 0;
-            overflow-x: auto;
-            font-family: 'Fira Code', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .endpoint-tester {
-            margin-top: 24px;
-        }
-        
-        .input-group {
-            display: flex;
-            margin-bottom: 16px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        input {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #222222);
-            font-size: 16px;
-        }
-        
-        button {
-            padding: 16px 24px;
-            background-color: var(--tg-theme-button-color, #40a7e3);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            transition: all 0.2s ease;
-        }
-        
-        button:hover {
-            background-color: var(--tg-theme-button-color, #3090c7);
-            transform: translateY(-2px);
-        }
-        
-        .result {
-            margin-top: 16px;
-            padding: 20px;
-            border-radius: 12px;
-            background-color: var(--tg-theme-secondary-bg-color, #f8f8f8);
-            min-height: 100px;
-            white-space: pre-wrap;
-            font-family: monospace;
-            font-size: 14px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .success {
-            color: #2ecc71;
-            font-weight: 600;
-        }
-        
-        .error {
-            color: #e74c3c;
-            font-weight: 600;
-        }
-        
-        .info {
-            color: #3498db;
-            margin-bottom: 16px;
-            padding: 16px;
-            background-color: rgba(52, 152, 219, 0.1);
-            border-radius: 12px;
-            border-left: 4px solid #3498db;
-        }
-        
-        .tips {
-            margin-top: 24px;
-        }
-        
-        ul {
-            padding-left: 24px;
-            margin-bottom: 16px;
-        }
-        
-        li {
-            margin-bottom: 12px;
-            line-height: 1.6;
-        }
-        
-        .tag {
-            display: inline-block;
-            background-color: var(--tg-theme-button-color, #40a7e3);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-right: 8px;
-            font-weight: 600;
-        }
-        
-        .step {
-            display: flex;
-            margin-bottom: 20px;
-            align-items: flex-start;
-        }
-        
-        .step-number {
-            background-color: var(--tg-theme-button-color, #40a7e3);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-right: 16px;
-            flex-shrink: 0;
-        }
-        
-        .step-content {
-            flex: 1;
-        }
-        
-        .platform-tabs {
-            display: flex;
-            margin-bottom: 16px;
-            border-bottom: 2px solid #e0e0e0;
-        }
-        
-        .platform-tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            font-weight: 500;
-        }
-        
-        .platform-tab.active {
-            border-bottom: 3px solid var(--tg-theme-button-color, #40a7e3);
-            color: var(--tg-theme-button-color, #40a7e3);
-        }
-        
-        .platform-content {
-            display: none;
-        }
-        
-        .platform-content.active {
-            display: block;
-        }
-        
-        footer {
+            padding: 12px;
             text-align: center;
-            margin-top: 40px;
-            padding: 20px;
-            color: var(--tg-theme-hint-color, #999999);
+        }
+
+        .product img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .product-title {
+            font-weight: 600;
+            margin-bottom: 5px;
             font-size: 14px;
         }
-        
-        @media (max-width: 600px) {
-            .input-group {
-                flex-direction: column;
-            }
-            
-            input {
-                border-radius: 12px 12px 0 0;
-            }
-            
-            button {
-                border-radius: 0 0 12px 12px;
-            }
+
+        .product-price {
+            color: var(--tg-theme-button-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart {
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .cart {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color);
+            padding: 10px;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-total {
+            font-weight: 600;
+        }
+
+        .checkout {
+            background: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <div class="logo">
-                <i class="fas fa-store"></i>
-            </div>
-            <h1>Магазин в Telegram - Решение CORS</h1>
-            <p class="subtitle">Устраняем проблемы с Cross-Origin Resource Sharing в Telegram Mini Apps</p>
-            <div class="tag"><i class="fas fa-bolt"></i> Решение для вашего проекта</div>
+            <h1>🛍️ Мой Магазин</h1>
+            <p>Добро пожаловать! Выберите товары</p>
         </header>
-        
-        <div class="card problem">
-            <h2><i class="fas fa-exclamation-triangle"></i> Проблема</h2>
-            <p>Ваш Telegram WebApp пытается получить доступ к API, но возникает ошибка CORS:</p>
-            
-            <div class="code">
-// Сообщение об ошибке
-Access to fetch at 'https://api.example.com/data' from origin 'https://your-telegram-app.com' 
-has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-            </div>
-            
-            <p>Это происходит из-за политики безопасности браузера, которая блокирует запросы с других доменов, если сервер явно не разрешил их.</p>
-        </div>
-        
-        <div class="card solution">
-            <h2><i class="fas fa-check-circle"></i> Решение</h2>
-            <p>Вам нужно настроить ваш сервер для включения правильных CORS заголовков в ответах.</p>
-            
-            <div class="platform-tabs">
-                <div class="platform-tab active" onclick="showPlatform('node')">Node.js/Express</div>
-                <div class="platform-tab" onclick="showPlatform('vercel')">Vercel</div>
-                <div class="platform-tab" onclick="showPlatform('nginx')">Nginx</div>
-            </div>
-            
-            <div class="platform-content active" id="node-content">
-                <p>Для сервера на Node.js/Express используйте пакет <strong>cors</strong>:</p>
-                
-                <div class="code">
-// Установите пакет cors
-// npm install cors
 
-const express = require('express');
-const cors = require('cors');
-const app = express();
+        <div id="products" class="products">
+            <div class="loading">Загрузка товаров...</div>
+        </div>
 
-// Включите CORS для всех маршрутов
-app.use(cors({
-  origin: ['https://your-telegram-app.com', 'https://your-vercel-app.vercel.app']
-}));
-
-// Или включите CORS для конкретного маршрута
-app.get('/api/data', cors({
-  origin: 'https://your-telegram-app.com'
-}), (req, res) => {
-  res.json({ message: 'Этот маршрут имеет включенный CORS' });
-});
-                </div>
-            </div>
-            
-            <div class="platform-content" id="vercel-content">
-                <p>Если вы используете Vercel, настройте CORS с помощью файла <strong>vercel.json</strong>:</p>
-                
-                <div class="code">
-// vercel.json
-{
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "https://your-telegram-app.com" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-Requested-With, Content-Type, Accept" }
-      ]
-    }
-  ]
-}
-                </div>
-            </div>
-            
-            <div class="platform-content" id="nginx-content">
-                <p>Для сервера на Nginx добавьте заголовки в конфигурацию:</p>
-                
-                <div class="code">
-location /api/ {
-    # Разрешить запросы с определенных доменов
-    add_header 'Access-Control-Allow-Origin' 'https://your-telegram-app.com';
-    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
-    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-    
-    # Обработка preflight запросов
-    if ($request_method = 'OPTIONS') {
-        add_header 'Access-Control-Allow-Origin' 'https://your-telegram-app.com';
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE';
-        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-        add_header 'Content-Type' 'text/plain; charset=utf-8';
-        add_header 'Content-Length' 0;
-        return 204;
-    }
-}
-                </div>
-            </div>
+        <div class="cart">
+            <div class="cart-total">Итого: 0 ₽</div>
+            <button class="checkout">Оформить заказ</button>
         </div>
-        
-        <div class="card endpoint-tester">
-            <h2><i class="fas fa-vial"></i> Тестирование вашего API</h2>
-            <p>Введите URL вашего API, чтобы проверить, правильно ли настроен CORS:</p>
-            
-            <div class="input-group">
-                <input type="text" id="api-url" placeholder="https://ваш-api.com/эндпоинт" value="">
-                <button id="test-button">Проверить</button>
-            </div>
-            
-            <div class="result" id="test-result">
-                <div class="info">Результаты тестирования появятся здесь</div>
-            </div>
-        </div>
-        
-        <div class="card tips">
-            <h2><i class="fas fa-lightbulb"></i> Дополнительные рекомендации</h2>
-            
-            <div class="step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <strong>Указывайте точные домены</strong> вместо использования звездочки (*) для лучшей безопасности
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <strong>Обрабатывайте preflight запросы (OPTIONS)</strong> правильно на вашем сервере
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <strong>Используйте переменные окружения</strong> для управления разрешенными доменами в разных средах
-                </div>
-            </div>
-            
-            <div class="step">
-                <div class="step-number">4</div>
-                <div class="step-content">
-                    <strong>Для Telegram Web Apps</strong> убедитесь, что включили все возможные URL развертывания в разрешенные домены
-                </div>
-            </div>
-            
-            <div class="info">
-                <i class="fas fa-exclamation-circle"></i> 
-                <strong>Частая ошибка:</strong> Забыть указать протокол (https://) в разрешенных доменах.
-            </div>
-        </div>
-        
-        <footer>
-            <p>Решение для проекта "Магазин в Telegram" | Создано с помощью ❤️ для устранения CORS ошибок</p>
-        </footer>
     </div>
 
     <script>
-        function showPlatform(platform) {
-            // Скрыть все платформы
-            document.querySelectorAll('.platform-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // Убрать активный класс со всех вкладок
-            document.querySelectorAll('.platform-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Показать выбранную платформу
-            document.getElementById(platform + '-content').classList.add('active');
-            
-            // Сделать выбранную вкладку активной
-            event.currentTarget.classList.add('active');
-        }
+        const tg = window.Telegram.WebApp;
+        const botToken = '7724093672:AAFnWkmxXRm6Thd0UalWtL-s9HIKW08X8Ho';
         
-        document.addEventListener('DOMContentLoaded', function() {
-            const testButton = document.getElementById('test-button');
-            const apiUrlInput = document.getElementById('api-url');
-            const testResult = document.getElementById('test-result');
-            
-            testButton.addEventListener('click', async function() {
-                const apiUrl = apiUrlInput.value.trim();
-                
-                if (!apiUrl) {
-                    testResult.innerHTML = '<div class="error">Пожалуйста, введите корректный URL</div>';
+        // Инициализация Telegram Web App
+        tg.expand();
+        tg.enableClosingConfirmation();
+        
+        let cart = [];
+        let products = [];
+
+        // Загрузка товаров
+        async function loadProducts() {
+            try {
+                // В реальном приложении здесь будет запрос к вашему API
+                // Для демонстрации используем mock данные
+                products = [
+                    {
+                        id: 1,
+                        name: "Смартфон",
+                        price: 19990,
+                        image: "https://via.placeholder.com/150?text=Смартфон",
+                        description: "Современный смартфон"
+                    },
+                    {
+                        id: 2,
+                        name: "Ноутбук",
+                        price: 49990,
+                        image: "https://via.placeholder.com/150?text=Ноутбук",
+                        description: "Мощный ноутбук"
+                    },
+                    {
+                        id: 3,
+                        name: "Наушники",
+                        price: 4990,
+                        image: "https://via.placeholder.com/150?text=Наушники",
+                        description: "Беспроводные наушники"
+                    },
+                    {
+                        id: 4,
+                        name: "Часы",
+                        price: 12990,
+                        image: "https://via.placeholder.com/150?text=Часы",
+                        description: "Умные часы"
+                    }
+                ];
+
+                displayProducts(products);
+            } catch (error) {
+                console.error('Ошибка загрузки товаров:', error);
+                document.getElementById('products').innerHTML = 
+                    '<div class="error">Ошибка загрузки товаров</div>';
+            }
+        }
+
+        // Отображение товаров
+        function displayProducts(products) {
+            const productsContainer = document.getElementById('products');
+            productsContainer.innerHTML = '';
+
+            products.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                productElement.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <div class="product-title">${product.name}</div>
+                    <div class="product-price">${product.price} ₽</div>
+                    <button class="add-to-cart" onclick="addToCart(${product.id})">В корзину</button>
+                `;
+                productsContainer.appendChild(productElement);
+            });
+        }
+
+        // Добавление в корзину
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cart.push(product);
+                updateCart();
+                tg.showPopup({
+                    title: "Добавлено в корзину",
+                    message: `${product.name} добавлен в корзину!`,
+                    buttons: [{ type: "ok" }]
+                });
+            }
+        }
+
+        // Обновление корзины
+        function updateCart() {
+            const total = cart.reduce((sum, item) => sum + item.price, 0);
+            document.querySelector('.cart-total').textContent = `Итого: ${total} ₽`;
+        }
+
+        // Оформление заказа
+        function setupCheckout() {
+            document.querySelector('.checkout').addEventListener('click', () => {
+                if (cart.length === 0) {
+                    tg.showPopup({
+                        title: "Корзина пуста",
+                        message: "Добавьте товары в корзину перед оформлением заказа",
+                        buttons: [{ type: "ok" }]
+                    });
                     return;
                 }
-                
-                testResult.innerHTML = '<div class="info">Тестирование эндпоинта...</div>';
-                
-                try {
-                    const response = await fetch(apiUrl);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        testResult.innerHTML = `
-                            <div class="success">✅ CORS настроен правильно!</div>
-                            <div>Заголовки ответа:</div>
-                            <div class="code">${JSON.stringify(Object.fromEntries([...response.headers]), null, 2)}</div>
-                            <div>Данные ответа:</div>
-                            <div class="code">${JSON.stringify(data, null, 2)}</div>
-                        `;
-                    } else {
-                        testResult.innerHTML = `<div class="error">Сервер вернул ошибку: ${response.status} ${response.statusText}</div>`;
-                    }
-                } catch (error) {
-                    testResult.innerHTML = `
-                        <div class="error">❌ Ошибка CORS или проблемы с сетью: ${error.message}</div>
-                        <div>Обычно это означает, что сервер не настроен для разрешения запросов с этого источника.</div>
-                    `;
-                }
+
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                const orderDetails = cart.map(item => 
+                    `- ${item.name}: ${item.price} ₽`
+                ).join('\n');
+
+                // Отправка заказа в Telegram бот
+                sendOrderToBot(orderDetails, total);
             });
+        }
+
+        // Отправка заказа боту
+        async function sendOrderToBot(orderDetails, total) {
+            const userId = tg.initDataUnsafe.user?.id;
+            const message = `
+Новый заказ от пользователя ${userId}:
+${orderDetails}
+Общая сумма: ${total} ₽
+            `;
+
+            try {
+                // Отправляем сообщение через API Telegram Bot
+                const response = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: userId, // Отправляем сообщение самому пользователю
+                        text: message
+                    })
+                });
+
+                if (response.ok) {
+                    tg.showPopup({
+                        title: "Заказ оформлен!",
+                        message: `Ваш заказ на сумму ${total} ₽ принят в обработку.`,
+                        buttons: [{ type: "ok" }]
+                    });
+                    cart = [];
+                    updateCart();
+                }
+            } catch (error) {
+                console.error('Ошибка отправки заказа:', error);
+            }
+        }
+
+        // Инициализация приложения
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+            setupCheckout();
             
-            // Инициализация Telegram WebApp
-            let tg = window.Telegram.WebApp;
-            tg.expand();
-            tg.enableClosingConfirmation();
-            
-            // Установка цветов темы на основе темы Telegram
-            document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
-            document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#222222');
-            document.documentElement.style.setProperty('--tg-theme-hint-color', tg.themeParams.hint_color || '#999999');
-            document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#40a7e3');
-            document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
-            document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f0f0f0');
-            
-            // Показ основной информации о WebApp
-            console.log("Telegram WebApp инициализирован");
-            console.log("Версия платформы:", tg.platform);
-            console.log("Параметры темы:", tg.themeParams);
+            // Применяем тему Telegram
+            if (tg.themeParams) {
+                document.documentElement.style.setProperty('--tg-theme-bg-color', tg.themeParams.bg_color || '#ffffff');
+                document.documentElement.style.setProperty('--tg-theme-text-color', tg.themeParams.text_color || '#222222');
+                document.documentElement.style.setProperty('--tg-theme-button-color', tg.themeParams.button_color || '#40a7e3');
+                document.documentElement.style.setProperty('--tg-theme-button-text-color', tg.themeParams.button_text_color || '#ffffff');
+                document.documentElement.style.setProperty('--tg-theme-secondary-bg-color', tg.themeParams.secondary_bg_color || '#f1f1f1');
+            }
         });
+
+        // Глобальные функции для использования в HTML
+        window.addToCart = addToCart;
     </script>
 </body>
 </html>
